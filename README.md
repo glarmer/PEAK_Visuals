@@ -2,6 +2,8 @@
 
 Do you wish you could make PEAK look even more ... *peak*? Well have I got the solution for you <br>
 
+![peakvisuals](https://glarmer.xyz/images/peakvisuals/peakvisualdemo.gif)
+
 Introducing, **"PEAK Visuals"**, a client-side mod for PEAK which unlocks better graphics options for PEAK! 
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q7IFRUH)
