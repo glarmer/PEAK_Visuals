@@ -74,7 +74,7 @@ public class ConfigurationHandler
         (
             "LOD",
             "LODQuality",
-            2f,
+            2.5f,
             "Controls the LOD bias of the game. PEAK's High equates to 1.0. Higher values increase detail distance. Range 0.1-10"
         );
 
