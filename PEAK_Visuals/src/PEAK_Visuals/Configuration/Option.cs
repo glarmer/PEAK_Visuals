@@ -66,7 +66,7 @@ public class Option
         };
     }
 
-    public static Option Int(string label, ConfigEntry<int> entry, int min, int max, int step = 1, Func<bool>? isDisabled = null)
+    public static Option Int(string label, ConfigEntry<int> entry, int min, int max, int step = 1, Func<bool>? isDisabled = null, Func<string>? displayValue = null)
     {
         return new Option(label, OptionType.Int)
         {
@@ -75,7 +75,7 @@ public class Option
             MaxInt = max,
             Step = step,
             IsDisabled = isDisabled ?? (() => false),
-            DisplayValue = () => entry.Value.ToString()
+            DisplayValue = displayValue ?? (() => entry.Value.ToString())
         };
     }
 }
