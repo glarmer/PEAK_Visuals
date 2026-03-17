@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEAK_Visuals", "PEAK_Scaled\src\PEAK_Visuals\PEAK_Visuals.csproj", "{34C127E9-40A9-4857-97C2-998C4A3C6F55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEAK_Visuals", "PEAK_Visuals\src\PEAK_Visuals\PEAK_Visuals.csproj", "{34C127E9-40A9-4857-97C2-998C4A3C6F55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
