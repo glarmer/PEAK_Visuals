@@ -16,6 +16,8 @@ public class ConfigurationHandler
     public ConfigEntry<int> ConfigShadowDistance;
     public ConfigEntry<int> ConfigShadowCascades;
     
+    public ConfigEntry<bool> ConfigAnisotropicFiltering;
+    
     public ConfigEntry<int> ConfigCameraAA;
     public ConfigEntry<int> ConfigMSAA;
     
@@ -24,6 +26,7 @@ public class ConfigurationHandler
     public float LodQuality => ConfigLODQuality.Value;
     public int ShadowDistance => ConfigShadowDistance.Value;
     public int ShadowCascades => ConfigShadowCascades.Value;
+    public bool AnisotropicFiltering => ConfigAnisotropicFiltering.Value;
     public int CameraAA => ConfigCameraAA.Value;
     public int MSAA => ConfigMSAA.Value;
     
@@ -127,6 +130,16 @@ public class ConfigurationHandler
             ConfigShadowCascades.Value = 10;
         }
         
+        ConfigAnisotropicFiltering = _config.Bind
+        (
+            "Quality",
+            "AnisotropicFiltering",
+            true,
+            "Valid options: true, false"
+        );
+        Plugin.Log.LogInfo("ConfigurationHandler: Anisotropic Filtering set to: " + ConfigAnisotropicFiltering.Value);
+        ConfigAnisotropicFiltering.SettingChanged += OnAnisotropicFilteringChanged;
+        
         ConfigCameraAA = _config.Bind
         (
             "AntiAliasing",
@@ -175,6 +188,11 @@ public class ConfigurationHandler
         ConfigMenuKey.SettingChanged += OnMenuKeyChanged;
         
         Plugin.Log.LogInfo("ConfigurationHandler initialised");
+    }
+
+    private void OnAnisotropicFilteringChanged(object sender, EventArgs e)
+    {
+        Plugin.Instance.Settings.SetAnisotropicFiltering();
     }
 
     private void OnCameraAAChanged(object sender, EventArgs e)

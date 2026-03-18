@@ -51,6 +51,7 @@ public partial class Plugin : BaseUnityPlugin
                     _ => "???"
                 }
             ),
+            Option.Bool("Anisotropic Filtering", ConfigurationHandler.ConfigAnisotropicFiltering),
             Option.Float("LOD Quality", ConfigurationHandler.ConfigLODQuality, 0.1f, 10f, 0.1f),
             Option.Int("Shadow Distance", ConfigurationHandler.ConfigShadowDistance, 0, 1000, 25),
             Option.Int("Shadow Cascades", ConfigurationHandler.ConfigShadowCascades, 1, 10),

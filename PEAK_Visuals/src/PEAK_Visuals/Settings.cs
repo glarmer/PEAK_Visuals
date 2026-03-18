@@ -17,12 +17,19 @@ public class Settings
         SetLODQuality();
         SetShadowDistance();
         SetShadowCascades();
+        SetAnisotropicFiltering();
     }
 
     public void SetAllCameraSettings()
     {
         SetPostProcessAA();
         SetMSAA();
+    }
+
+    public void SetAnisotropicFiltering()
+    {
+        QualitySettings.anisotropicFiltering = _configurationHandler.AnisotropicFiltering ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
+        Plugin.Log.LogInfo("Anisotropic Filtering applied: " + _configurationHandler.AnisotropicFiltering);
     }
 
     public void SetPostProcessAA()
