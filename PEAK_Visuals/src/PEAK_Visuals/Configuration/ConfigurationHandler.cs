@@ -181,13 +181,13 @@ public class ConfigurationHandler
         );
         Plugin.Log.LogInfo("ConfigurationHandler: Camera AA set to: " + ConfigCameraAA.Value);
         ConfigCameraAA.SettingChanged += OnCameraAAChanged;
-        if (ConfigShadowCascades.Value < 0)
+        if (ConfigCameraAA.Value < 0)
         {
-            ConfigShadowCascades.Value = 0;
+            ConfigCameraAA.Value = 0;
         }
-        else if (ConfigShadowCascades.Value > 3)
+        else if (ConfigCameraAA.Value > 3)
         {
-            ConfigShadowCascades.Value = 3;
+            ConfigCameraAA.Value = 3;
         }
         
         ConfigMSAA = _config.Bind
