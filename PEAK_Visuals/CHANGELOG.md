@@ -1,3 +1,13 @@
-# Changelog
+### 1.1.0
 
-TODO: You can follow this format for your changelog: <https://keepachangelog.com/en/1.1.0/>
+* Make it so things like the CameraAA option are formatted nicely in the options
+* Add Shadowmap resolution option
+* Add Anisotropic filtering option
+* Add Soft shadows option
+* Fix cap of shadow cascades being too high
+* Fix shadowcascades being set to 3 on start due to incorrect config definition
+* Tweak the default preset a bit
+
+### 1.0.0
+
+* Initial Release
