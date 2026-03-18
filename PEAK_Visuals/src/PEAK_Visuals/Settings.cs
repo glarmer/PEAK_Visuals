@@ -19,6 +19,8 @@ public class Settings
         SetShadowDistance();
         SetShadowCascades();
         SetAnisotropicFiltering();
+        SetSoftShadows();
+        SetShadowmapResolution();
     }
 
     public void SetAllCameraSettings()
