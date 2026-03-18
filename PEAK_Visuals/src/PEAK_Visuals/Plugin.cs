@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using PEAK_Visuals.Patches;
 using PEAK_Visuals.Configuration;
-using Photon.Pun;
 using UnityEngine;
 
 namespace PEAK_Visuals;

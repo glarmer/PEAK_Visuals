@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using PEAK_Visuals.Configuration;
 using UnityEngine;

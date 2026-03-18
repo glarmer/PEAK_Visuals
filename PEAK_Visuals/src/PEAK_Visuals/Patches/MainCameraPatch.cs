@@ -1,5 +1,4 @@
 using HarmonyLib;
-using UnityEngine.Rendering.Universal;
 
 namespace PEAK_Visuals.Patches;
 
