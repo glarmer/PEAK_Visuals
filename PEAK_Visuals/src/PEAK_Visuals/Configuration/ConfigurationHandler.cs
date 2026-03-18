@@ -84,11 +84,8 @@ public class ConfigurationHandler
             2.5f,
             "Controls the LOD bias of the game. PEAK's High equates to 1.0. Higher values increase detail distance. Range 0.1-10"
         );
-
         Plugin.Log.LogInfo("ConfigurationHandler: LOD Quality set to: " + ConfigLODQuality.Value);
-
         ConfigLODQuality.SettingChanged += OnLODQualityChanged;
-
         if (ConfigLODQuality.Value < 0.1f)
         {
             ConfigLODQuality.Value = 0.1f;
@@ -143,13 +140,13 @@ public class ConfigurationHandler
         );
         Plugin.Log.LogInfo("ConfigurationHandler: Shadowmap Resolution set to: " + ConfigShadowmapResolution.Value);
         ConfigShadowmapResolution.SettingChanged += OnShadowmapResolutionChanged;
-        if (ConfigShadowCascades.Value < 0)
+        if (ConfigShadowmapResolution.Value < 0)
         {
-            ConfigShadowCascades.Value = 0;
+            ConfigShadowmapResolution.Value = 0;
         }
-        else if (ConfigShadowCascades.Value > 10240)
+        else if (ConfigShadowmapResolution.Value > 10240)
         {
-            ConfigShadowCascades.Value = 10240;
+            ConfigShadowmapResolution.Value = 10240;
         }
         
         ConfigSoftShadows = _config.Bind
