@@ -69,7 +69,7 @@ public class ConfigurationHandler
         ConfigShadowDistance = Bind(
             "Shadows",
             "ShadowDistance",
-            200,
+            300,
             "Controls the maximum distance shadows are rendered. PEAK's High option equates to 200. Higher values improve distant shadows but reduce performance. Range 0-1000",
             () => Plugin.Instance.Settings.SetShadowDistance(),
             v => Mathf.Clamp(v, 0, 1000)
