@@ -135,7 +135,7 @@ public class ConfigurationHandler
             "Quality",
             "AnisotropicFiltering",
             true,
-            "Valid options: true, false"
+            "Helps texture sharpness at angles (set to on)"
         );
         Plugin.Log.LogInfo("ConfigurationHandler: Anisotropic Filtering set to: " + ConfigAnisotropicFiltering.Value);
         ConfigAnisotropicFiltering.SettingChanged += OnAnisotropicFilteringChanged;
