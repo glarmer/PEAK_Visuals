@@ -33,7 +33,7 @@ public partial class Plugin : BaseUnityPlugin
         
         _harmony.PatchAll();
         
-        var go = new GameObject("PEAKScaledUI");
+        var go = new GameObject("PEAKVisualsUI");
         DontDestroyOnLoad(go);
         _ui = go.AddComponent<ModConfigurationUI>();
         _ui.Init([
