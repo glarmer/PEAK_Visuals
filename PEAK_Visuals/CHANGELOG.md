@@ -1,3 +1,7 @@
+### 1.1.1
+
+* Default shadow distance was not set (oops!)
+
 ### 1.1.0
 
 * Make it so things like the CameraAA option are formatted nicely in the options

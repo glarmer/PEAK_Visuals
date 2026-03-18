@@ -19,7 +19,7 @@ The default configuration aims to be a balance between high quality, clarity and
 
 To this end in the default configuration:
 - TAA is disabled (to reduce blur) and it is replaced with MSAA + SMAA.
-- Shadowmap Resolution is raised to 4096, shadow distance to 250 (50 higher than default high), and shadow cascades are set to 4 - this should work together to stop shadows being wobbly
+- Shadowmap Resolution is raised to 4096, shadow distance to 300 (100 higher than default "High"), and shadow cascades are set to 4 - this should work together to stop shadows being wobbly
 - Anisotropic Filtering is set to ON, this option makes textures render more correctly at angles, which increases clarity but I did also notice it makes some of the surfaces have more visible textures (like rock cracks, etc) on them. I think it looks fine, but you can try it on and off.
 - LOD Quality is increased from PEAK's 1.0 to 2.5
 - Render Scale is left at 1.0, increasing it even a little bit (e.g. 1.2x) can improve distant objects a lot but it does effect framerate a lot!
