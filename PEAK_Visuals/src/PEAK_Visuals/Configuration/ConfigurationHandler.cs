@@ -15,6 +15,8 @@ public class ConfigurationHandler
     public ConfigEntry<string> ConfigMenuKey;
     public ConfigEntry<int> ConfigShadowDistance;
     public ConfigEntry<int> ConfigShadowCascades;
+    public ConfigEntry<int> ConfigShadowmapResolution;
+    public ConfigEntry<bool> ConfigSoftShadows;
     
     public ConfigEntry<bool> ConfigAnisotropicFiltering;
     
@@ -26,6 +28,8 @@ public class ConfigurationHandler
     public float LodQuality => ConfigLODQuality.Value;
     public int ShadowDistance => ConfigShadowDistance.Value;
     public int ShadowCascades => ConfigShadowCascades.Value;
+    public int ShadowmapResolution => ConfigShadowmapResolution.Value;
+    public bool SoftShadows => ConfigSoftShadows.Value;
     public bool AnisotropicFiltering => ConfigAnisotropicFiltering.Value;
     public int CameraAA => ConfigCameraAA.Value;
     public int MSAA => ConfigMSAA.Value;
@@ -130,6 +134,34 @@ public class ConfigurationHandler
             ConfigShadowCascades.Value = 10;
         }
         
+        ConfigShadowmapResolution = _config.Bind
+        (
+            "Shadows",
+            "ShadowmapResolution",
+            8192,
+            "Controls the quality of the shadows"
+        );
+        Plugin.Log.LogInfo("ConfigurationHandler: Shadowmap Resolution set to: " + ConfigShadowmapResolution.Value);
+        ConfigShadowmapResolution.SettingChanged += OnShadowmapResolutionChanged;
+        if (ConfigShadowCascades.Value < 0)
+        {
+            ConfigShadowCascades.Value = 0;
+        }
+        else if (ConfigShadowCascades.Value > 10240)
+        {
+            ConfigShadowCascades.Value = 10240;
+        }
+        
+        ConfigSoftShadows = _config.Bind
+        (
+            "Shadows",
+            "SoftShadows",
+            true,
+            "Allows shadows to be soft, if your PC is too low spec for a high shadowmap setting this to false can stop the wobblyness of the shadows"
+        );
+        Plugin.Log.LogInfo("ConfigurationHandler: Soft Shadows set to: " + ConfigSoftShadows.Value);
+        ConfigSoftShadows.SettingChanged += OnSoftShadowsChanged;
+        
         ConfigAnisotropicFiltering = _config.Bind
         (
             "Quality",
@@ -188,6 +220,16 @@ public class ConfigurationHandler
         ConfigMenuKey.SettingChanged += OnMenuKeyChanged;
         
         Plugin.Log.LogInfo("ConfigurationHandler initialised");
+    }
+
+    private void OnSoftShadowsChanged(object sender, EventArgs e)
+    {
+        Plugin.Instance.Settings.SetSoftShadows();
+    }
+
+    private void OnShadowmapResolutionChanged(object sender, EventArgs e)
+    {
+        Plugin.Instance.Settings.SetShadowmapResolution();
     }
 
     private void OnAnisotropicFilteringChanged(object sender, EventArgs e)

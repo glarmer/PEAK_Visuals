@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using PEAK_Visuals.Configuration;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -24,6 +25,26 @@ public class Settings
     {
         SetPostProcessAA();
         SetMSAA();
+    }
+
+    public void SetSoftShadows()
+    {
+        if (GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline)
+        {
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            var softShadowsField = pipeline.GetType().GetField("m_SoftShadowsSupported", flags);
+            softShadowsField.SetValue(pipeline, _configurationHandler.SoftShadows);
+            Plugin.Log.LogInfo("Soft Shadows applied: " + _configurationHandler.ShadowmapResolution);
+        }
+    }
+
+    public void SetShadowmapResolution()
+    {
+        if (GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline)
+        {
+            pipeline.mainLightShadowmapResolution = _configurationHandler.ShadowmapResolution;
+            Plugin.Log.LogInfo("Shadowmap Resolution applied: " + _configurationHandler.ShadowmapResolution);
+        }
     }
 
     public void SetAnisotropicFiltering()

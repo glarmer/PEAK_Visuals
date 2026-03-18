@@ -53,8 +53,10 @@ public partial class Plugin : BaseUnityPlugin
             ),
             Option.Bool("Anisotropic Filtering", ConfigurationHandler.ConfigAnisotropicFiltering),
             Option.Float("LOD Quality", ConfigurationHandler.ConfigLODQuality, 0.1f, 10f, 0.1f),
+            Option.Int("Shadowmap Resolution", ConfigurationHandler.ConfigShadowmapResolution, 0, 10240, 1024),
             Option.Int("Shadow Distance", ConfigurationHandler.ConfigShadowDistance, 0, 1000, 25),
             Option.Int("Shadow Cascades", ConfigurationHandler.ConfigShadowCascades, 1, 10),
+            Option.Bool("Soft Shadows", ConfigurationHandler.ConfigSoftShadows),
             Option.Int(
                 "Camera Antialiasing",
                 ConfigurationHandler.ConfigCameraAA, 0, 3,
