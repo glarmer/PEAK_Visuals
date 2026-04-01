@@ -126,6 +126,10 @@ public class ConfigurationHandler
             () => Plugin.Instance.Settings.SetMSAA(),
             v => v <= 0 ? 0 : v <= 2 ? 2 : v <= 4 ? 4 : 8
         );
+        if (MSAA != 0 && CameraAA == 3)
+        {
+            ConfigCameraAA.Value = 2; //TAA cannot be active while MSAA is, default to SMAA.
+        }
 
         ConfigMenuKey = Bind(
             "General",

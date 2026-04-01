@@ -59,6 +59,10 @@ public class Settings
         if (MainCamera.instance.cam.TryGetComponent(out UniversalAdditionalCameraData data))
         {
             data.antialiasing = (AntialiasingMode)Plugin.Instance.ConfigurationHandler.CameraAA;
+            if (Plugin.Instance.ConfigurationHandler.MSAA != 0 && Plugin.Instance.ConfigurationHandler.CameraAA == 3)
+            {
+                Plugin.Instance.ConfigurationHandler.ConfigMSAA.Value = 2; //TAA has been deliberately turned on, so turn off MSAA
+            }
         }
         Plugin.Log.LogInfo("Camera AA applied: " + _configurationHandler.CameraAA);
     }
@@ -68,6 +72,10 @@ public class Settings
         if (GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline)
         {
             pipeline.msaaSampleCount = Plugin.Instance.ConfigurationHandler.MSAA;
+            if (Plugin.Instance.ConfigurationHandler.MSAA != 0 && Plugin.Instance.ConfigurationHandler.CameraAA == 3)
+            {
+                Plugin.Instance.ConfigurationHandler.ConfigCameraAA.Value = 2; //TAA cannot be active while MSAA is, default to SMAA.
+            }
         }
         Plugin.Log.LogInfo("MSAA applied: " + _configurationHandler.MSAA);
     }
