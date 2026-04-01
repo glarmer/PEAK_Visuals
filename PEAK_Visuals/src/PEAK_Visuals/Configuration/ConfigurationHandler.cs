@@ -124,7 +124,7 @@ public class ConfigurationHandler
             8,
             "Controls whether Multi-Sample Anti-Aliasing (MSAA) is enabled. MSAA smooths jagged edges on geometry by sampling pixels multiple times. It is generally sharper than post-process AA methods but only affects object edges and can slightly reduce performance. PEAK does not use it by default. Higher values = better quality but worse performance. Valid values = 0, 2, 4, 8.",
             () => Plugin.Instance.Settings.SetMSAA(),
-            v => Mathf.Clamp(v, 0, 8)
+            v => v <= 0 ? 0 : v <= 2 ? 2 : v <= 4 ? 4 : 8
         );
 
         ConfigMenuKey = Bind(
