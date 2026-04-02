@@ -61,7 +61,7 @@ public class Settings
             data.antialiasing = (AntialiasingMode)Plugin.Instance.ConfigurationHandler.CameraAA;
             if (Plugin.Instance.ConfigurationHandler.MSAA != 0 && Plugin.Instance.ConfigurationHandler.CameraAA == 3)
             {
-                Plugin.Instance.ConfigurationHandler.ConfigMSAA.Value = 2; //TAA has been deliberately turned on, so turn off MSAA
+                Plugin.Instance.ConfigurationHandler.ConfigMSAA.Value = 0; //TAA has been deliberately turned on, so turn off MSAA
             }
         }
         Plugin.Log.LogInfo("Camera AA applied: " + _configurationHandler.CameraAA);
