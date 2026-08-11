@@ -1,5 +1,6 @@
 using System.Reflection;
 using PEAK_Visuals.Configuration;
+using PEAK_Visuals.Upscaling;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -9,11 +10,23 @@ namespace PEAK_Visuals;
 public class Settings
 {
     private ConfigurationHandler _configurationHandler = Plugin.Instance.ConfigurationHandler;
+
+    internal static float GetDLSSRenderScale(DLSSMode mode)
+    {
+        return mode switch
+        {
+            DLSSMode.Quality => 0.67f,
+            DLSSMode.Balanced => 0.58f,
+            DLSSMode.Performance => 0.5f,
+            DLSSMode.UltraPerformance => 1f / 3f,
+            DLSSMode.DLAA => 1f,
+            _ => 1f
+        };
+    }
     
     public void SetAllSettings()
     {
-        SetResolutionScale();
-        SetUpscaler();
+        SetDLSS();
         SetLODQuality();
         SetShadowDistance();
         SetShadowCascades();
@@ -24,8 +37,7 @@ public class Settings
 
     public void SetAllCameraSettings()
     {
-        SetPostProcessAA();
-        SetMSAA();
+        SetDLSS();
     }
 
     public void SetSoftShadows()
@@ -56,12 +68,16 @@ public class Settings
 
     public void SetPostProcessAA()
     {
-        if (MainCamera.instance.cam.TryGetComponent(out UniversalAdditionalCameraData data))
+        if (MainCamera.instance != null &&
+            MainCamera.instance.cam != null &&
+            MainCamera.instance.cam.TryGetComponent(out UniversalAdditionalCameraData data))
         {
-            data.antialiasing = (AntialiasingMode)Plugin.Instance.ConfigurationHandler.CameraAA;
+            data.antialiasing = Plugin.Instance.ConfigurationHandler.DLSSEnabled
+                ? AntialiasingMode.None
+                : (AntialiasingMode)Plugin.Instance.ConfigurationHandler.CameraAA;
             if (Plugin.Instance.ConfigurationHandler.MSAA != 0 && Plugin.Instance.ConfigurationHandler.CameraAA == 3)
             {
-                Plugin.Instance.ConfigurationHandler.ConfigMSAA.Value = 0; //TAA has been deliberately turned on, so turn off MSAA
+                Plugin.Instance.ConfigurationHandler.ConfigMSAA.Value = 0;
             }
         }
         Plugin.Log.LogInfo("Camera AA applied: " + _configurationHandler.CameraAA);
@@ -71,10 +87,12 @@ public class Settings
     {
         if (GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset pipeline)
         {
-            pipeline.msaaSampleCount = Plugin.Instance.ConfigurationHandler.MSAA;
+            pipeline.msaaSampleCount = Plugin.Instance.ConfigurationHandler.DLSSEnabled
+                ? 1
+                : Plugin.Instance.ConfigurationHandler.MSAA;
             if (Plugin.Instance.ConfigurationHandler.MSAA != 0 && Plugin.Instance.ConfigurationHandler.CameraAA == 3)
             {
-                Plugin.Instance.ConfigurationHandler.ConfigCameraAA.Value = 2; //TAA cannot be active while MSAA is, default to SMAA.
+                Plugin.Instance.ConfigurationHandler.ConfigCameraAA.Value = 2;
             }
         }
         Plugin.Log.LogInfo("MSAA applied: " + _configurationHandler.MSAA);
@@ -84,16 +102,33 @@ public class Settings
     {
         if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset currentRenderPipeline))
             return;
-        currentRenderPipeline.renderScale = _configurationHandler.RenderScale;
-        Plugin.Log.LogInfo("Render Scale applied: " + _configurationHandler.RenderScale);
+        float renderScale = _configurationHandler.DLSSEnabled
+            ? GetDLSSRenderScale(_configurationHandler.DLSSMode)
+            : _configurationHandler.RenderScale;
+        currentRenderPipeline.renderScale = renderScale;
+        Plugin.Log.LogInfo(_configurationHandler.DLSSEnabled
+            ? $"Render Scale applied: {renderScale} (DLSS {_configurationHandler.DLSSMode})"
+            : "Render Scale applied: " + renderScale);
     }
 
     public void SetUpscaler()
     {
         if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset currentRenderPipeline))
             return;
-        currentRenderPipeline.upscalingFilter = (UpscalingFilterSelection) _configurationHandler.UpscalingFilter;
-        Plugin.Log.LogInfo("Upscaling Filter applied: " + _configurationHandler.UpscalingFilter);
+        currentRenderPipeline.upscalingFilter = _configurationHandler.DLSSEnabled
+            ? UpscalingFilterSelection.Linear
+            : (UpscalingFilterSelection) _configurationHandler.UpscalingFilter;
+        Plugin.Log.LogInfo("Upscaling Filter applied: " + currentRenderPipeline.upscalingFilter);
+    }
+
+    public void SetDLSS()
+    {
+        SetResolutionScale();
+        SetUpscaler();
+        SetPostProcessAA();
+        SetMSAA();
+        Plugin.Instance.DLSSController?.ResetHistory();
+        Plugin.Log.LogInfo("DLSS mode applied: " + _configurationHandler.DLSSMode);
     }
 
     public void SetLODQuality()

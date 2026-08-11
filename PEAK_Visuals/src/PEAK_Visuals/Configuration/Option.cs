@@ -29,7 +29,14 @@ public class Option
         Type = type;
     }
     
-    public static Option Float(string label, ConfigEntry<float> entry, float min, float max, float step = 0.05f, Func<bool>? isDisabled = null)
+    public static Option Float(
+        string label,
+        ConfigEntry<float> entry,
+        float min,
+        float max,
+        float step = 0.05f,
+        Func<bool>? isDisabled = null,
+        Func<string>? displayValue = null)
     {
         return new Option(label, OptionType.Float)
         {
@@ -38,7 +45,7 @@ public class Option
             MaxFloat = max,
             FloatStep = step,
             IsDisabled = isDisabled ?? (() => false),
-            DisplayValue = () => entry.Value.ToString("F3")
+            DisplayValue = displayValue ?? (() => entry.Value.ToString("F3"))
         };
     }
 

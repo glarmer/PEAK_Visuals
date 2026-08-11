@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using PEAK_Visuals.Configuration;
+using PEAK_Visuals.Upscaling;
 using UnityEngine;
 
 namespace PEAK_Visuals;
@@ -13,6 +14,7 @@ public partial class Plugin : BaseUnityPlugin
     public static Plugin Instance {get; private set;} = null!;
     public ConfigurationHandler ConfigurationHandler {get; private set;} = null!;
     public Settings Settings { get; private set; } = null!;
+    internal DLSSController DLSSController { get; private set; } = null!;
     private readonly Harmony _harmony = new(Id);
     
     private ModConfigurationUI _ui;
@@ -28,16 +30,28 @@ public partial class Plugin : BaseUnityPlugin
         ConfigurationHandler = new ConfigurationHandler(Config);
         Settings = new Settings();
         
-        _harmony.PatchAll();
-        
         var go = new GameObject("PEAKVisualsUI");
         DontDestroyOnLoad(go);
+        DLSSController = go.AddComponent<DLSSController>();
         _ui = go.AddComponent<ModConfigurationUI>();
+
+        _harmony.PatchAll();
         _ui.Init([
-            Option.Float("Render Scale", ConfigurationHandler.ConfigRenderScale, 0.1f, 2f, 0.1f),
+            Option.Float(
+                "Render Scale",
+                ConfigurationHandler.ConfigRenderScale,
+                0.1f,
+                2f,
+                0.1f,
+                () => ConfigurationHandler.DLSSEnabled,
+                () => ConfigurationHandler.DLSSEnabled
+                    ? $"{PEAK_Visuals.Settings.GetDLSSRenderScale(ConfigurationHandler.DLSSMode):F2} ({ConfigurationHandler.DLSSMode})"
+                    : ConfigurationHandler.ConfigRenderScale.Value.ToString("F3")
+            ),
             Option.Int(
                 "Upscaling Filter",
                 ConfigurationHandler.ConfigUpscalingFilter, 0, 4,
+                isDisabled: () => ConfigurationHandler.DLSSEnabled,
                 displayValue: () => ConfigurationHandler.ConfigUpscalingFilter.Value switch
                 {
                     0 => "Auto",
@@ -48,6 +62,50 @@ public partial class Plugin : BaseUnityPlugin
                     _ => "???"
                 }
             ),
+            Option.Int(
+                "DLSS",
+                ConfigurationHandler.ConfigDLSSMode, 0, 5,
+                displayValue: () => ConfigurationHandler.DLSSMode switch
+                {
+                    DLSSMode.Off => "Off",
+                    DLSSMode.Quality => "Quality (67%)",
+                    DLSSMode.Balanced => "Balanced (58%)",
+                    DLSSMode.Performance => "Performance (50%)",
+                    DLSSMode.UltraPerformance => "Ultra Performance (33%)",
+                    DLSSMode.DLAA => "DLAA (100%)",
+                    _ => "???"
+                }
+            ),
+            Option.Int(
+                "DLSS Preset",
+                ConfigurationHandler.ConfigDLSSPreset,
+                (int)DLSSPresetMode.PresetF,
+                (int)DLSSPresetMode.PresetM,
+                isDisabled: () => !ConfigurationHandler.DLSSEnabled,
+                displayValue: () => ConfigurationHandler.DLSSPresetMode switch
+                {
+                    DLSSPresetMode.PresetF => "Preset F (CNN)",
+                    DLSSPresetMode.PresetJ => "Preset J (Transformer)",
+                    DLSSPresetMode.PresetK => "Preset K (Transformer)",
+                    DLSSPresetMode.PresetL => "Preset L (Transformer DLSS 4.5)",
+                    DLSSPresetMode.PresetM => "Preset M (Transformer DLSS 4.5)",
+                    _ => "???"
+                }
+            ),
+            Option.Bool(
+                "DLSS Jitter",
+                ConfigurationHandler.ConfigDLSSJitter,
+                () => !ConfigurationHandler.DLSSEnabled
+            ),
+            Option.Float(
+                "DLSS Jitter Strength",
+                ConfigurationHandler.ConfigDLSSJitterStrength,
+                0f,
+                1f,
+                0.05f,
+                () => !ConfigurationHandler.DLSSEnabled || !ConfigurationHandler.DLSSJitterEnabled,
+                () => $"{ConfigurationHandler.DLSSJitterStrength * 100f:F0}%"
+            ),
             Option.Bool("Anisotropic Filtering", ConfigurationHandler.ConfigAnisotropicFiltering),
             Option.Float("LOD Quality", ConfigurationHandler.ConfigLODQuality, 0.1f, 10f, 0.1f),
             Option.Int("Shadowmap Resolution", ConfigurationHandler.ConfigShadowmapResolution, 0, 10240, 1024),
@@ -57,6 +115,7 @@ public partial class Plugin : BaseUnityPlugin
             Option.Int(
                 "Camera Antialiasing",
                 ConfigurationHandler.ConfigCameraAA, 0, 3,
+                isDisabled: () => ConfigurationHandler.DLSSEnabled,
                 displayValue: () => ConfigurationHandler.ConfigCameraAA.Value switch
                 {
                     0 => "None",
@@ -69,6 +128,7 @@ public partial class Plugin : BaseUnityPlugin
             Option.Int(
                 "MSAA",
                 ConfigurationHandler.ConfigMSAA, 0, 8, 2,
+                isDisabled: () => ConfigurationHandler.DLSSEnabled,
                 displayValue: () => ConfigurationHandler.ConfigMSAA.Value switch
                 {
                     0 => "Off",

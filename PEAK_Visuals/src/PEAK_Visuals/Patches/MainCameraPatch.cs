@@ -10,6 +10,7 @@ public static class MainCameraPatch
         [HarmonyPostfix]
         static void Postfix(MainCamera __instance)
         {
+            Plugin.Instance.DLSSController.Refresh(__instance.cam);
             Plugin.Instance.Settings.SetAllCameraSettings();
         }
     }

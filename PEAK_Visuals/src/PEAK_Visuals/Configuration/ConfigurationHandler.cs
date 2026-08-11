@@ -1,5 +1,6 @@
 using System;
 using BepInEx.Configuration;
+using PEAK_Visuals.Upscaling;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +13,10 @@ public class ConfigurationHandler
 
     public ConfigEntry<float> ConfigRenderScale;
     public ConfigEntry<int> ConfigUpscalingFilter;
+    public ConfigEntry<int> ConfigDLSSMode;
+    public ConfigEntry<int> ConfigDLSSPreset;
+    public ConfigEntry<bool> ConfigDLSSJitter;
+    public ConfigEntry<float> ConfigDLSSJitterStrength;
     public ConfigEntry<float> ConfigLODQuality;
     public ConfigEntry<string> ConfigMenuKey;
     public ConfigEntry<int> ConfigShadowDistance;
@@ -24,6 +29,11 @@ public class ConfigurationHandler
 
     public float RenderScale => ConfigRenderScale.Value;
     public int UpscalingFilter => ConfigUpscalingFilter.Value;
+    internal DLSSMode DLSSMode => (DLSSMode)ConfigDLSSMode.Value;
+    internal DLSSPresetMode DLSSPresetMode => (DLSSPresetMode)ConfigDLSSPreset.Value;
+    public bool DLSSJitterEnabled => ConfigDLSSJitter.Value;
+    public float DLSSJitterStrength => ConfigDLSSJitterStrength.Value;
+    public bool DLSSEnabled => ConfigDLSSMode.Value != (int)PEAK_Visuals.Upscaling.DLSSMode.Off;
     public float LodQuality => ConfigLODQuality.Value;
     public int ShadowDistance => ConfigShadowDistance.Value;
     public int ShadowCascades => ConfigShadowCascades.Value;
@@ -55,6 +65,40 @@ public class ConfigurationHandler
             "Controls what filter the game uses to scale to your monitor resolution. 0 = auto, 1 = linear, 2 = point, 3 = FSR 1.0, 4 = STP",
             () => Plugin.Instance.Settings.SetUpscaler(),
             v => Mathf.Clamp(v, 0, 4)
+        );
+
+        ConfigDLSSMode = Bind(
+            "Scaling",
+            "DLSSMode",
+            0,
+            "Controls NVIDIA DLSS, requires an Nvidia RTX GPU! 0 = Off, 1 = Quality, 2 = Balanced, 3 = Performance, 4 = Ultra Performance, 5 = DLAA.",
+            () => Plugin.Instance.Settings.SetDLSS(),
+            v => Mathf.Clamp(v, 0, 5)
+        );
+
+        ConfigDLSSPreset = Bind(
+            "Scaling",
+            "DLSSPreset",
+            (int)DLSSPresetMode.PresetK,
+            "Controls the DLSS render preset, experiment to your taste M and K are pretty good. 0 = Preset F, 1 = Preset J, 2 = Preset K, 3 = Preset L, 4 = Preset M.",
+            () => Plugin.Instance.Settings.SetDLSS()
+        );
+
+        ConfigDLSSJitter = Bind(
+            "Scaling",
+            "DLSSJitter",
+            true,
+            "Applies sub-pixel projection jitter for DLSS temporal accumulation.",
+            () => Plugin.Instance.Settings.SetDLSS()
+        );
+
+        ConfigDLSSJitterStrength = Bind(
+            "Scaling",
+            "DLSSJitterStrength",
+            0.4f,
+            "Controls the jitter for DLSS, essentially turn it up until you see shaking or a decrease in visual quality.",
+            () => Plugin.Instance.Settings.SetDLSS(),
+            v => Mathf.Clamp(v, 0f, 1f)
         );
 
         ConfigLODQuality = Bind(
@@ -128,7 +172,7 @@ public class ConfigurationHandler
         );
         if (MSAA != 0 && CameraAA == 3)
         {
-            ConfigCameraAA.Value = 2; //TAA cannot be active while MSAA is, default to SMAA.
+            ConfigCameraAA.Value = 2;
         }
 
         ConfigMenuKey = Bind(

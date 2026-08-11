@@ -20,7 +20,15 @@ readme = "../../README.md"
 outdir = "../../artifacts/thunderstore/"
 
 [[build.copy]]
-source = "../../artifacts/bin/PEAK_Scaled/release/com.github.glarmer.PEAK_Scaled.dll"
+source = "../../artifacts/bin/PEAK_Visuals/release/com.github.glarmer.PEAK_Visuals.dll"
+target = "plugins/"
+
+[[build.copy]]
+source = "../../artifacts/bin/PEAK_Visuals/release/NVUnityPlugin.dll"
+target = "plugins/"
+
+[[build.copy]]
+source = "../../artifacts/bin/PEAK_Visuals/release/nvngx_dlss.dll"
 target = "plugins/"
 
 [[build.copy]]
