@@ -3,9 +3,10 @@ namespace PEAK_Visuals.Upscaling;
 internal enum DLSSMode
 {
     Off = 0,
-    Quality = 1,
-    Balanced = 2,
-    Performance = 3,
-    UltraPerformance = 4,
-    DLAA = 5
+    UltraQuality = 1,
+    Quality = 2,
+    Balanced = 3,
+    Performance = 4,
+    UltraPerformance = 5,
+    DLAA = 6
 }

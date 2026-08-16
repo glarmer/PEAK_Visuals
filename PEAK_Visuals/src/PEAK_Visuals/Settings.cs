@@ -15,6 +15,7 @@ public class Settings
     {
         return mode switch
         {
+            DLSSMode.UltraQuality => 0.77f,
             DLSSMode.Quality => 0.67f,
             DLSSMode.Balanced => 0.58f,
             DLSSMode.Performance => 0.5f,
