@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEAK_Visuals", "PEAK_Visuals\src\PEAK_Visuals\PEAK_Visuals.csproj", "{34C127E9-40A9-4857-97C2-998C4A3C6F55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpscalerLib", "PEAK_Visuals\src\UpscalerLib\UpscalerLib.csproj", "{C9B5578C-273D-404E-82B9-E4315F27302B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{34C127E9-40A9-4857-97C2-998C4A3C6F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34C127E9-40A9-4857-97C2-998C4A3C6F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34C127E9-40A9-4857-97C2-998C4A3C6F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9B5578C-273D-404E-82B9-E4315F27302B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B5578C-273D-404E-82B9-E4315F27302B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B5578C-273D-404E-82B9-E4315F27302B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B5578C-273D-404E-82B9-E4315F27302B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

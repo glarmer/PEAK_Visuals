@@ -33,7 +33,7 @@ public class ConfigurationHandler
     internal DLSSPresetMode DLSSPresetMode => (DLSSPresetMode)ConfigDLSSPreset.Value;
     public bool DLSSJitterEnabled => ConfigDLSSJitter.Value;
     public float DLSSJitterStrength => ConfigDLSSJitterStrength.Value;
-    public bool DLSSEnabled => ConfigDLSSMode.Value != (int)PEAK_Visuals.Upscaling.DLSSMode.Off;
+    public bool DLSSEnabled => Plugin.Instance.UpscalerLibAvailable && ConfigDLSSMode.Value != (int)PEAK_Visuals.Upscaling.DLSSMode.Off;
     public float LodQuality => ConfigLODQuality.Value;
     public int ShadowDistance => ConfigShadowDistance.Value;
     public int ShadowCascades => ConfigShadowCascades.Value;
@@ -186,6 +186,12 @@ public class ConfigurationHandler
         SetupInputAction();
 
         Plugin.Log.LogInfo("ConfigurationHandler initialised");
+    }
+
+    public void ForceDLSSOff()
+    {
+        ConfigDLSSMode.Value = (int)DLSSMode.Off;
+        ConfigDLSSJitter.Value = false;
     }
 
     private ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, string description, Action onChanged = null, Func<T, T> clamp = null)

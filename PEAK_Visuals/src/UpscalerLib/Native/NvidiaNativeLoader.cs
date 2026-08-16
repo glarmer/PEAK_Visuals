@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using BepInEx.Logging;
 using UnityEngine;
 using UnityEngine.NVIDIA;
 
-namespace PEAK_Visuals.Upscaling;
+namespace UpscalerLib.Native;
 
-internal static class NvidiaNativeLoader
+public static class NvidiaNativeLoader
 {
     private const string NVUnityPluginDLL = "NVUnityPlugin.dll";
     private const string NVNGXDLSSDLL = "nvngx_dlss.dll";
@@ -15,11 +16,14 @@ internal static class NvidiaNativeLoader
     private static bool _loaded;
     private static string? _nativeDirectory;
     private static string? _pluginDirectory;
+    private static ManualLogSource? _fallbackLog;
 
     public static string NativeDirectory => _nativeDirectory ?? GetAssemblyDirectory();
 
-    public static bool EnsureLoaded()
+    public static bool EnsureLoaded(ManualLogSource? logger = null)
     {
+        logger ??= Plugin.Log ?? (_fallbackLog ??= BepInEx.Logging.Logger.CreateLogSource("Upscaler Lib"));
+
         if (NVUnityPlugin.IsLoaded())
             return true;
 
@@ -30,22 +34,22 @@ internal static class NvidiaNativeLoader
         _pluginDirectory = GetAssemblyDirectory();
         _nativeDirectory = GetExecutableDirectory();
 
-        if (!StageBundledNativeDLLs(_pluginDirectory, _nativeDirectory))
+        if (!StageBundledNativeDLLs(_pluginDirectory, _nativeDirectory, logger))
             _nativeDirectory = _pluginDirectory;
 
-        string DLSSPath = Path.Combine(_nativeDirectory, NVNGXDLSSDLL);
+        string dlssPath = Path.Combine(_nativeDirectory, NVNGXDLSSDLL);
         string pluginPath = Path.Combine(_nativeDirectory, NVUnityPluginDLL);
 
-        if (!File.Exists(DLSSPath) || !File.Exists(pluginPath))
+        if (!File.Exists(dlssPath) || !File.Exists(pluginPath))
         {
-            Plugin.Log.LogWarning("DLSS native files are missing. Expected NVUnityPlugin.dll and nvngx_dlss.dll in " + _nativeDirectory);
+            logger.LogWarning("DLSS native files are missing. NVUnityPlugin.dll and nvngx_dlss.dll should be in " + _nativeDirectory);
             return false;
         }
 
         if (!SetDLLDirectoryW(_nativeDirectory))
-            Plugin.Log.LogWarning($"Failed to add DLSS native directory to DLL search path.");
+            logger.LogWarning("Failed to add DLSS native directory to DLL search path.");
 
-        TryLoadLibrary(DLSSPath);
+        TryLoadLibrary(dlssPath, logger);
 
         try
         {
@@ -53,30 +57,30 @@ internal static class NvidiaNativeLoader
 
             if (!_loaded)
             {
-                Plugin.Log.LogWarning("NVIDIA Unity plugin was found but Unity did not load it. Native directory: " + _nativeDirectory);
+                logger.LogWarning("NVIDIA Unity plugin was found but Unity did not load it. Directory " + _nativeDirectory);
             }
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogWarning($"NVIDIA Unity plugin load failed: {ex.GetType().Name}: {ex.Message}");
+            logger.LogWarning($"NVIDIA Unity plugin load failed: {ex.GetType().Name}: {ex.Message}");
             _loaded = false;
         }
 
         return _loaded || NVUnityPlugin.IsLoaded();
     }
 
-    private static bool StageBundledNativeDLLs(string sourceDirectory, string destinationDirectory)
+    private static bool StageBundledNativeDLLs(string sourceDirectory, string destinationDirectory, ManualLogSource logger)
     {
         if (string.Equals(sourceDirectory, destinationDirectory, StringComparison.OrdinalIgnoreCase))
             return true;
 
         bool ok = true;
-        ok &= StageBundledNativeDLL(sourceDirectory, destinationDirectory, NVUnityPluginDLL);
-        ok &= StageBundledNativeDLL(sourceDirectory, destinationDirectory, NVNGXDLSSDLL);
+        ok &= StageBundledNativeDLL(sourceDirectory, destinationDirectory, NVUnityPluginDLL, logger);
+        ok &= StageBundledNativeDLL(sourceDirectory, destinationDirectory, NVNGXDLSSDLL, logger);
         return ok;
     }
 
-    private static bool StageBundledNativeDLL(string sourceDirectory, string destinationDirectory, string fileName)
+    private static bool StageBundledNativeDLL(string sourceDirectory, string destinationDirectory, string fileName, ManualLogSource logger)
     {
         string source = Path.Combine(sourceDirectory, fileName);
         string destination = Path.Combine(destinationDirectory, fileName);
@@ -90,19 +94,19 @@ internal static class NvidiaNativeLoader
                 return true;
 
             File.Copy(source, destination, true);
-            Plugin.Log.LogInfo($"Staged {fileName} to {destinationDirectory} for DLSS.");
+            logger.LogInfo($"Staged {fileName} to {destinationDirectory} for DLSS.");
             return true;
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogWarning($"Failed to stage {fileName} to {destinationDirectory}: {ex.GetType().Name}: {ex.Message}");
+            logger.LogWarning($"Failed to stage {fileName} to {destinationDirectory}: {ex.GetType().Name}: {ex.Message}");
             return false;
         }
     }
 
     private static string GetAssemblyDirectory()
     {
-        string? assemblyLocation = typeof(Plugin).Assembly.Location;
+        string? assemblyLocation = typeof(NvidiaNativeLoader).Assembly.Location;
         string? directory = string.IsNullOrEmpty(assemblyLocation)
             ? null
             : Path.GetDirectoryName(assemblyLocation);
@@ -122,14 +126,15 @@ internal static class NvidiaNativeLoader
                     return directory;
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Plugin.Log.LogError(ex.StackTrace);
         }
 
         return Directory.GetCurrentDirectory();
     }
 
-    private static bool TryLoadLibrary(string path)
+    private static bool TryLoadLibrary(string path, ManualLogSource logger)
     {
         try
         {
@@ -137,15 +142,15 @@ internal static class NvidiaNativeLoader
             if (handle != IntPtr.Zero)
                 return true;
 
-            Plugin.Log.LogWarning($"Failed to preload {Path.GetFileName(path)}.");
+            logger.LogWarning($"Failed to preload {Path.GetFileName(path)}.");
         }
         catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
         {
-            Plugin.Log.LogWarning($"Windows native library loader is unavailable {ex.GetType().Name}");
+            logger.LogWarning($"Windows native library loader is unavailable {ex.GetType().Name}");
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogWarning($"Failed to preload {Path.GetFileName(path)}: {ex.GetType().Name}: {ex.Message}");
+            logger.LogWarning($"Failed to preload {Path.GetFileName(path)}: {ex.GetType().Name}: {ex.Message}");
         }
 
         return false;

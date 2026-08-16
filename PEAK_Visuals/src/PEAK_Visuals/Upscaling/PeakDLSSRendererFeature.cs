@@ -224,7 +224,7 @@ internal sealed class PeakDLSSRendererFeature : ScriptableRendererFeature
 
             try
             {
-                if (!NvidiaNativeLoader.EnsureLoaded())
+                if (!UpscalerLibIntegration.EnsureNvidiaLoaded())
                 {
                     Plugin.Log.LogWarning("DLSS unavailable because the nvidia Unity plugin did not load.");
                     return false;
@@ -270,7 +270,7 @@ internal sealed class PeakDLSSRendererFeature : ScriptableRendererFeature
 
         private static NvidiaGraphicsDevice? CreateGraphicsDevice(string projectID)
         {
-            string nativeDirectory = NvidiaNativeLoader.NativeDirectory;
+            string nativeDirectory = UpscalerLibIntegration.NativeDirectory;
             string nativeDirectoryWithSeparator = nativeDirectory.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
                 || nativeDirectory.EndsWith(Path.AltDirectorySeparatorChar.ToString(), StringComparison.Ordinal)
                     ? nativeDirectory
@@ -308,7 +308,7 @@ internal sealed class PeakDLSSRendererFeature : ScriptableRendererFeature
                 $"DeviceVersion='{SystemInfo.graphicsDeviceVersion}', " +
                 $"NVPluginLoaded={NVUnityPlugin.IsLoaded()}, " +
                 $"NVPluginVersion={NvidiaGraphicsDevice.version}, " +
-                $"NativeDir='{NvidiaNativeLoader.NativeDirectory}'");
+                $"NativeDir='{UpscalerLibIntegration.NativeDirectory}'");
         }
 
         private bool ShouldReinitializeContext(

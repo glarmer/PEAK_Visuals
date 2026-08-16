@@ -24,12 +24,16 @@ source = "../../artifacts/bin/PEAK_Visuals/release/com.github.glarmer.PEAK_Visua
 target = "plugins/"
 
 [[build.copy]]
-source = "../../artifacts/bin/PEAK_Visuals/release/NVUnityPlugin.dll"
-target = "plugins/"
+source = "../../artifacts/bin/UpscalerLib/release/com.github.glarmer.UpscalerLib.dll"
+target = "plugins/UpscalerLib/"
 
 [[build.copy]]
-source = "../../artifacts/bin/PEAK_Visuals/release/nvngx_dlss.dll"
-target = "plugins/"
+source = "../../artifacts/bin/UpscalerLib/release/NVUnityPlugin.dll"
+target = "plugins/UpscalerLib/"
+
+[[build.copy]]
+source = "../../artifacts/bin/UpscalerLib/release/nvngx_dlss.dll"
+target = "plugins/UpscalerLib/"
 
 [[build.copy]]
 source = "../../CHANGELOG.md"
