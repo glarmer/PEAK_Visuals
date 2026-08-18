@@ -85,7 +85,7 @@ public partial class Plugin : BaseUnityPlugin
                     displayValue: () => ConfigurationHandler.DLSSMode switch
                     {
                         DLSSMode.Off => "Off",
-                        DLSSMode.UltraQuality => "Quality (77%)",
+                        DLSSMode.UltraQuality => "Ultra Quality (77%)",
                         DLSSMode.Quality => "Quality (67%)",
                         DLSSMode.Balanced => "Balanced (58%)",
                         DLSSMode.Performance => "Performance (50%)",
