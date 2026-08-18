@@ -184,9 +184,6 @@ public class ModConfigurationUI : MenuWindow
             return;
         }
 
-        if (Plugin.Instance.ConfigurationHandler.MenuAction?.WasPerformedThisFrame() == true)
-            ToggleMenu();
-
         if (!_visible || _options == null || _options.Count == 0) return;
 
         if (Input.GetKeyDown(KeyCode.Tab))

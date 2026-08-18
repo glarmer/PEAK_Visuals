@@ -168,4 +168,13 @@ public partial class Plugin : BaseUnityPlugin
         
         Log.LogInfo($"Plugin {Name} is loaded!");
     }
+
+    private void Update()
+    {
+        if (ConfigurationHandler.MenuAction?.WasPerformedThisFrame() == true &&
+            ModConfigurationUI.Instance != null)
+        {
+            ModConfigurationUI.Instance.ToggleMenu();
+        }
+    }
 }
